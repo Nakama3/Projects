@@ -1,4 +1,3 @@
-//change
 #include <Adafruit_FXAS21002C.h>
 #include <Adafruit_FXOS8700.h>
 #include <Adafruit_Sensor.h>
@@ -87,7 +86,7 @@ void setup() {
 
 void loop() {
 
-
+///////////// Getting controller input by deconding SBUS packets ////////////////////
    if (Serial.available ()) {
       b = Serial.read ();
 
@@ -133,7 +132,7 @@ void loop() {
         //// setting channel values /////
         
         rollSetpoint = map(channels[2], 172, 1811, -10, 10);
-      //  throttle = map(channels[1], 172, 1881, 1000, 2000);
+         //  throttle = map(channels[1], 172, 1881, 1000, 2000);
         
         ///// Arming check ///////
         if(channels[9]>1000){
@@ -144,18 +143,17 @@ void loop() {
             armed = true;
           }
 
-          /////////////// Flight code ////////////////////////
+           /////////////// Flight code ////////////////////////
 
           
-            timePrev = time;
+            timePrev = time;  //time dalay
             time = millis();
             deltaTime = (time - timePrev) / 1000;
                    
-            
-            RollAngleCalc();
+            RollAngleCalc();  //PID calcs
             PID_Calc();
             
-            PID_motorOutput();  
+            PID_motorOutput();  //ESC signal output
             SerialPlot_gyro();
             Serial.print(rollSetpoint);
             Serial.print("\n");
