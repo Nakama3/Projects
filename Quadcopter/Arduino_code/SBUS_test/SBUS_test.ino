@@ -1,9 +1,11 @@
+#include <SoftwareSerial.h>
 // comment change
 // another change
 int weird;
 //#define rxPin 7
 //#define txPin 8
 int channels[18];
+SoftwareSerial RXSerial(8,7); //(RX, TX)
 
 
 void setup() {
@@ -19,7 +21,8 @@ void setup() {
      pinMode(1, OUTPUT);
 //     myservo8.attach(8);  // attaches the servo on pin 8 to the servo object
      //myservo11.attach(11);  // attaches the servo on pin 11 to the servo object
-     Serial.begin(100000,SERIAL_8E2); //The SBUS is a non standard baud rate which can be confirmed using an oscilloscope
+     RXSerial.begin(100000);
+     Serial.begin(9600);
      int test;  
 }
 
@@ -75,8 +78,8 @@ void getChannel(){
 
  //Check the serial port for incoming data
  //This could also be done via the serialEvent()
-  if (Serial.available ()) {
-      b = Serial.read ();
+  if (RXSerial.available ()) {
+      b = RXSerial.read ();
        
      //this is a new package and it' not zero byte then it's probably the start byte B11110000 (sent MSB)
      //so start reading the 25 byte package

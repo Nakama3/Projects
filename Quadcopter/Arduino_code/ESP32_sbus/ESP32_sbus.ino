@@ -8,18 +8,17 @@ static int           idx;
 static unsigned long last_refresh = 0;
 static int           lost = 0;
 byte b;
-int led = 5;
 
 
 bool armed;
 int rollSetpoint, throttle;
-  
+
+//HardwareSerial Serial2(2);
+
 void setup() {
      pinMode(0, INPUT);
      pinMode(1, OUTPUT);
-     pinMode(5, OUTPUT);
      Serial2.begin(100000,SERIAL_8E2); //The SBUS is a non standard baud rate which can be confirmed using an oscilloscope  
-     Serial2.print("test");
 }
 
 void loop() {

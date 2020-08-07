@@ -42,7 +42,9 @@ Servo esc_Right, esc_Left;
 void setup() {
   // put your setup code here, to run once:
   time = millis();
-  Serial.begin(100000);
+  Serial.begin(9600);
+  Serial1.begin(100000);
+  
   pinMode(led_LR, OUTPUT);
   pinMode(led_LG, OUTPUT);
   pinMode(led_RR, OUTPUT);
@@ -59,7 +61,7 @@ void setup() {
   rollError = 0;
   rollGyro = 0;
   rollAccel = 0;
-  
+  Serial.print("test");
   /////////////////////////// gain values //////////////////////
   
   p_gain = 6;   //previously 3 // test 1: 8
@@ -87,8 +89,8 @@ void setup() {
 void loop() {
 
 ///////////// Getting controller input by deconding SBUS packets ////////////////////
-   if (Serial.available ()) {
-      b = Serial.read ();
+   if (Serial1.available ()) {
+      b = Serial1.read ();
 
       if (idx == 0 && b != 0x0F) {  // start byte 15?
       } 
@@ -184,15 +186,15 @@ bool Testarm(int armSwitch){
   if(armSwitch < 1000){
     esc_Left.writeMicroseconds(1000);
     esc_Right.writeMicroseconds(1000);
-    Serial.print("not ready");
-    Serial.print(armSwitch);
-    Serial.print("\n");
+ //   Serial.print("not ready");
+  //  Serial.print(armSwitch);
+ //   Serial.print("\n");
     return escReady = false;
   }
   else{
-    Serial.print("ready!");
-    Serial.print(armSwitch);
-    Serial.print("\n");
+ //   Serial.print("ready!");
+//    Serial.print(armSwitch);
+//    Serial.print("\n");
     return escReady = true;
   }
 }

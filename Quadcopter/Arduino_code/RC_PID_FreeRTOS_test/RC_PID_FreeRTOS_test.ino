@@ -30,11 +30,11 @@ int outputPot;
 
 Servo esc_Right, esc_Left;
 
-/////////////////////// Task Declaration ///////////////////////
-void TaskIMU_angle( void *pvParameters );
-void TaskPID_roll( void *pvParameters );
-void TaskMotorOutput( void *pvParameters );
-void TaskArmFunction( void *pvParameters );
+/////////////////////// Task Declaration //////////////////////
+//void TaskIMU_angle( void *pvParameters );
+//void TaskPID_roll( void *pvParameters );
+//void TaskMotorOutput( void *pvParameters );
+//void TaskArmFunction( void *pvParameters );
 
 
 /////////////////////////////////////////////////////////// setup /////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ void loop() {
 }
 ///////////////////////////////////////////////////////////////// Starting Tasks //////////////////////////////////////////////////////////
 
-void TaskArmFunction( void *pvParameters ){
+static void TaskArmFunction( void *pvParameters ){
   (void) pvParameters;
   Serial.print("Arming sequence started");
   for(;;){
@@ -112,7 +112,7 @@ void TaskArmFunction( void *pvParameters ){
   }
 }
 
-void TaskIMU_angle( void *pvParameters ){
+static void TaskIMU_angle( void *pvParameters ){
   (void) pvParameters;
   Serial.print("test 2");
   for(;;){
@@ -136,7 +136,7 @@ void TaskIMU_angle( void *pvParameters ){
   
 }
 
-void TaskPID_roll( void *pvParameters ){
+static void TaskPID_roll( void *pvParameters ){
   (void) pvParameters;
   Serial.print("test 3");
   for(;;){
@@ -161,7 +161,7 @@ void TaskPID_roll( void *pvParameters ){
   }
 }
 
-void TaskMotorOutput( void *pvParameters ){
+static void TaskMotorOutput( void *pvParameters ){
   (void) pvParameters;
   Serial.print("test 4");
   for(;;){
