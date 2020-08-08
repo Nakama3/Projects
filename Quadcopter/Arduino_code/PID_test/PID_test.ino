@@ -74,8 +74,10 @@ void setup() {
 void loop() {  
   armFunction();      //MUST use when mmotors are active with props
 
- // rollSetpoint = -map(analogRead(A2), 0, 1000, -10, 10);
- throttle = map(analogRead(A2), 0, 1000, 1500, 1900);
+ // rollSetpoint = analogRead(A2);
+  //rollSetpoint = -map(analogRead(A2), 0, 1000, -10, 10);
+//  throttle = analogRead(A3);
+  //throttle = map(analogRead(A3), 0, 1000, 1500, 1900);
   
   // put your main code here, to run repeatedly:
   timePrev = time;

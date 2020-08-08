@@ -1,6 +1,6 @@
 #include <Servo.h>
 int channels[18];
-int led = 9;
+int led = 5;
 Servo ESC;
 
 void setup() {

@@ -2,28 +2,28 @@
 #include <TimerOne.h>
 #include <Servo.h>
 
-int flag = 0;
+ int flag = 0;
 int i;
-int buffer[25];
+uint8_t buffer[25];
 int channels[16];
 byte b;
 bool failsafe = 0;
-int LED = 9;
+int LED = 5;
 int ch1, ch2, ch3, ch4, ch5, ch6, ch7, ch8, ch9, ch10, ch11, ch12, ch13, ch14, ch15, ch16, ch17, ch18;
 
 
-SoftwareSerial RXSerial(8,7); //(RX, TX)
+//SoftwareSerial RXSerial(8,7); //(RX, TX)
 
 
 void setup() {
   // put your setup code here, to run once:
   pinMode(LED,OUTPUT);
   
-  RXSerial.begin(100000);
+//  RXSerial.begin(100000);
   delay(1000);
-  Serial.begin(9600);
+  Serial.begin(100000);
   delay(1000);
-  Timer1.initialize(975);
+  Timer1.initialize(1000);
   Timer1.attachInterrupt(readFrSky);
 }
 
@@ -57,8 +57,8 @@ void loop() {
 
 
 void readFrSky(){
-  if(RXSerial.available()){     //wait for data to be availble on the serial stream
-    b = RXSerial.read();
+  if(Serial.available()){     //wait for data to be availble on the serial stream
+    b = Serial.read();
     if(i == 0 && b != 0x0F){      //wait for start byte 00001111 (0x0F)
       //error?
     }
