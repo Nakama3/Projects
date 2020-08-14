@@ -22,6 +22,7 @@ int pwmLeft, pwmRight;
 const int rLED = 10;
 const int gLED = 5;
 bool armed;
+bool escReady;
 
 Servo esc_Right, esc_Left;
 
@@ -44,9 +45,9 @@ void setup() {
   rollAccel = 0;
   /////////////////////////// gain values //////////////////////
   
-  p_gain = 6;   //previously 3 // test 1: 8
+  p_gain = 2;   //previously 3 // test 1: 8
   i_gain = 0.05;    //previously 0.05 // test 1: 0.075
-  d_gain = 0.125;     //previously 0.25 test 1: 0.4
+  d_gain = 0.05;     //previously 0.25 test 1: 0.4
 
   //////////////////////////////////////////////////////////////
 
@@ -79,8 +80,8 @@ void loop() {
 
   //// setting channel values /////
   
-  rollSetpoint = getChannel(2, -15, 15);
-  throttle = getChannel(1, 1000, 1900);
+  rollSetpoint = getChannel(4, -15, 15);
+  throttle = getChannel(3, 1000, 1900);
   
   ///// Arming check ///////
   if(getChannel(9, 172, 1811)>1000){
@@ -117,6 +118,21 @@ void loop() {
 //////////////////////////////////////////////// end main loop /////////////////////////////////////////////////////////////////
 
 
+
+
+void RollAngleCalc(){
+  sensors_event_t aevent, mevent;
+  accelmag.getEvent(&aevent, &mevent);
+  
+  sensors_event_t event;
+  gyro.getEvent(&event);
+
+  rollAccel = 57.2958* atan((aevent.acceleration.y) / (sqrt( sq((aevent.acceleration.x)) + sq((aevent.acceleration.z))) ));
+  rollGyro = event.gyro.x * 57.2958 * deltaTime;
+  
+  rollAngle = 0.98 * rollAngle + rollGyro + 0.02 *rollAccel ;
+}
+
 void PID_Calc(){
   tempError = rollError;
   rollError = rollSetpoint - rollAngle;
@@ -137,31 +153,16 @@ void PID_Calc(){
 }
 
 
-void RollAngleCalc(){
-    sensors_event_t aevent, mevent;
-  /* Get a new sensor event */
-  accelmag.getEvent(&aevent, &mevent);
-  
-  sensors_event_t event;
-  gyro.getEvent(&event);
-
-  rollAccel = 57.2958* atan((aevent.acceleration.y) / (sqrt( sq((aevent.acceleration.x)) + sq((aevent.acceleration.z))) ));
-  rollGyro = event.gyro.x * 57.2958 * deltaTime;
-  
-  rollAngle = 0.98 * rollAngle + rollGyro + 0.02 *rollAccel ;
-}
-
-
 void PID_motorOutput(){
   
-  pwmRight = throttle - map(PID_roll, -400, 400, -200, 200);
-  pwmLeft = throttle + map(PID_roll, -400, 400, -200, 200);
+  pwmRight = throttle - map(PID_roll, -400, 400, -100, 100);
+  pwmLeft = throttle + map(PID_roll, -400, 400, -100, 100);
 
-  if(pwmRight < 1500){
-    pwmRight = 1500;
+  if(pwmRight < 1000){
+    pwmRight = 1000;
   }
-  if(pwmLeft < 1500){
-    pwmLeft = 1500;
+  if(pwmLeft < 1000){
+    pwmLeft = 1000;
   }
   if(pwmRight > 1900){
     pwmRight = 1900;

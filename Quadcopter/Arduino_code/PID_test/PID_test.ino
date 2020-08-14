@@ -1,4 +1,3 @@
-//change
 #include <Adafruit_FXAS21002C.h>
 #include <Adafruit_FXOS8700.h>
 #include <Adafruit_Sensor.h>
@@ -49,12 +48,12 @@ void setup() {
   rollError = 0;
   rollGyro = 0;
   rollAccel = 0;
-  throttle = 1600;
+  throttle = 1300;
   /////////////////////////// gain values //////////////////////
   
-  p_gain = 6;   //previously 3 // test 1: 8
-  i_gain = 0.05;    //previously 0.05 // test 1: 0.075
-  d_gain = 0.125;     //previously 0.25 test 1: 0.4
+  p_gain = 2;   //previously 3 // test 1: 8  // test :  6
+  i_gain = 0.075;    //previously 0.05 // test 1: 0.075 // test 2: .5
+  d_gain = 0.05;     //previously 0.25 test 1: 0.4 // test 2: 0.125
 
   //////////////////////////////////////////////////////////////
 
@@ -75,7 +74,7 @@ void loop() {
   armFunction();      //MUST use when mmotors are active with props
 
  // rollSetpoint = analogRead(A2);
-  //rollSetpoint = -map(analogRead(A2), 0, 1000, -10, 10);
+  rollSetpoint = -map(analogRead(A2), 0, 1000, -10, 10);
 //  throttle = analogRead(A3);
   //throttle = map(analogRead(A3), 0, 1000, 1500, 1900);
   
@@ -193,8 +192,8 @@ void PID_Calc(){
 
 void PID_motorOutput(){
   
-  pwmRight = throttle - map(PID_roll, -400, 400, -300, 300);
-  pwmLeft = throttle + map(PID_roll, -400, 400, -300, 300);
+  pwmRight = throttle - map(PID_roll, -400, 400, -100, 100);
+  pwmLeft = throttle + map(PID_roll, -400, 400, -100, 100);
 
   if(pwmRight < 1000){
     pwmRight = 1000;
