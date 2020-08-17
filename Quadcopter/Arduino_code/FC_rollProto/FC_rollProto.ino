@@ -1,11 +1,21 @@
+#include <SBUS.h>
+#include <Arduino.h>
 #include <Adafruit_FXAS21002C.h>
 #include <Adafruit_FXOS8700.h>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
 #include <Servo.h>
-#include <SBUS.h>
 #include <limits.h>
 
+
+int _channels[18];
+int _failsafe;
+long _goodFrames;
+long _lostFrames;
+long _decoderErrorFrames;
+long long _lastGoodFrame;
+
+    
 SBUS sbus(Serial);
 
 Adafruit_FXAS21002C gyro = Adafruit_FXAS21002C(0x0021002C);
@@ -20,7 +30,7 @@ float rollSetpoint, P_calc, I_calc, D_calc, PID_roll;
 int throttle = 1700;
 int pwmLeft, pwmRight;
 const int rLED = 10;
-const int gLED = 5;
+const int gLED = 9;
 bool armed;
 bool escReady;
 
@@ -28,6 +38,17 @@ Servo esc_Right, esc_Left;
 
 void setup() {
   // put your setup code here, to run once:
+  
+  noInterrupts();
+  TCCR2A  = 0;
+  TCCR2B  = 0;
+  TCNT2   = 0;
+  OCR2A   = 249;
+  TCCR2A |= (1 << WGM21);
+  TCCR2B |= (1 << CS22);
+  TIMSK2 |= (1 << OCIE2A);
+  interrupts();
+  
   time = millis();
   sbus.begin();
    
@@ -36,8 +57,8 @@ void setup() {
   pinMode(0, INPUT);
   pinMode(1, OUTPUT);
 
-  esc_Right.attach(11);  //pin 11 is right ESC
-  esc_Left.attach(9);     //pin 9 is left ESC
+  esc_Right.attach(6);  //pin 11 is right ESC
+  esc_Left.attach(5);     //pin 9 is left ESC
   
   rollSetpoint = 0;
   rollError = 0;
