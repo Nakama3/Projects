@@ -34,6 +34,7 @@ const int gLED = 9;
 bool armed;
 bool escReady;
 
+int stv1 = 0;
 int stv2 = 0;
 
 Servo esc_Right, esc_Left;
@@ -52,8 +53,6 @@ void setup() {
   interrupts();
   
   sbus.begin();
-  
-  time = millis(); 
   
   pinMode(rLED, OUTPUT);
   pinMode(gLED, OUTPUT);
@@ -101,48 +100,41 @@ int getChannel(int channel, int min, int max){
 
 
 void loop() {
-
-  //// setting channel values /////
-  
-  rollSetpoint = getChannel(4, -15, 15);
-  throttle = getChannel(3, 1000, 1900);
-  
-  ///// Arming check ///////
-  if(getChannel(9, 172, 1811)>1000){
-    while(armed == false){
-      digitalWrite(gLED, HIGH);
-      digitalWrite(rLED, LOW);
-      delay(1000);
-      armed = true;
-    }
-  
-     /////////////// Flight code ////////////////////////
-  
-    
-      timePrev = time;  //time dalay
-      time = millis();
-      deltaTime = (time - timePrev) / 1000;
-             
-      RollAngleCalc();  //PID calcs
-      PID_Calc();
-      
-      PID_motorOutput();  //ESC signal output       
-            
-  }
-  else{
-    esc_Left.writeMicroseconds(1000);
-    esc_Right.writeMicroseconds(1000);
-    digitalWrite(rLED, HIGH);
-    digitalWrite(gLED, LOW);
-    armed = false;
-  }
+  smArm();
+  smPID();
 }
 
 
 //////////////////////////////////////////////// end main loop /////////////////////////////////////////////////////////////////
 
 
-void SM(){
+void smArm(){
+  switch(stv1){
+    case 0:
+      stv1 = 1;
+      break;
+    case 1:
+      if(sbus.getChannel(9) > 1000){
+        digitalWrite(gLED, HIGH);
+        if(armed == false){
+          delay(1000);
+        }
+        digitalWrite(rLED, LOW);
+        armed = true;
+      }
+      else if(sbus.getChannel(9) < 1000){
+        digitalWrite(gLED, LOW);
+        digitalWrite(rLED, HIGH);
+        esc_Left.writeMicroseconds(1000);
+        esc_Right.writeMicroseconds(1000);
+        armed = false;
+      }
+      stv1 = 0;
+      break;
+  }
+}
+
+void smPID(){
   switch(stv2){          // reset 
     case 0:
       stv2 = 1;
@@ -161,15 +153,17 @@ void SM(){
         stv2 = 3;
       }
       else{
+        esc_Left.writeMicroseconds(1000);
+        esc_Right.writeMicroseconds(1000);
         stv2 = 0;
       }
       break;
     case 3:
-      if(RollAngleCalc() != getChannel(4, -10, 10)){
+      if(RollAngleCalc() != getChannel(4, 10, -10)){
         stv2 = 4;
       }
       else{
-        stv2 = 5;
+        stv2 = 4;
       }
       break;
     case 4:
@@ -184,16 +178,7 @@ void SM(){
 }
 
 
-
-
-
-
-
-
-
-
-
-int RollAngleCalc(){
+double RollAngleCalc(){
   sensors_event_t aevent, mevent;
   accelmag.getEvent(&aevent, &mevent);
   
