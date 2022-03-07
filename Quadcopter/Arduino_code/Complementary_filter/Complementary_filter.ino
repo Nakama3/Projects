@@ -2,6 +2,7 @@
 #include <Adafruit_FXOS8700.h>  //accel & magne library
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
+#include  <Servo.h>
 
 Adafruit_FXAS21002C gyro = Adafruit_FXAS21002C(0x0021002C);
 Adafruit_FXOS8700 accelmag = Adafruit_FXOS8700(0x8700A, 0x8700B);
@@ -9,6 +10,7 @@ Adafruit_FXOS8700 accelmag = Adafruit_FXOS8700(0x8700A, 0x8700B);
 float rollAngle, rollGyro, rollAccel, accelVect;
 float timePrev, deltaTime, time;
 
+Servo esc_Right, esc_Left;
 
 void setup() {
   Wire.begin();

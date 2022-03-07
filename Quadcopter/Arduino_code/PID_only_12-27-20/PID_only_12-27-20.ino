@@ -25,13 +25,12 @@ int outputPot;
 
 Servo esc_Right, esc_Left;
 
-
 //////////////////////////////////////////////// setup ////////////////////////////////////////////////////////////
 void setup() {
   Wire.begin();
-  // put your setup code here, to run once:
   time = millis();
   Serial.begin(9600);
+  
   pinMode(0, INPUT);
   pinMode(1, OUTPUT);
   pinMode(arm_LED, OUTPUT);
@@ -49,12 +48,12 @@ void setup() {
   throttle = 1600;
   /////////////////////////// gain values //////////////////////
   
-  p_gain = 2;   //previously 3 // test 1: 8  // test :  6
-  i_gain = 0.075;    //previously 0.05 // test 1: 0.075 // test 2: .5
-  d_gain = 0.05;     //previously 0.25 test 1: 0.4 // test 2: 0.125
+  p_gain = 1;   //previously 3 // test 1: 8  // test :  6
+  i_gain = 0.0;    //previously 0.05 // test 1: 0.075 // test 2: .5
+  d_gain = 0.125;     //previously 0.25 test 1: 0.4 // test 2: 0.125
 
   //////////////////////////////////////////////////////////////
-
+  
   if (!accelmag.begin(ACCEL_RANGE_4G)) {
     Serial.println("Ooops, no FXOS8700 detected ... Check your wiring!");
     while (1);
@@ -82,9 +81,9 @@ void loop() {
 
   
   RollAngleCalc();
+
   PID_Calc();
   PID_motorOutput();
-  //SerialData_motors();
   SerialPlot_gyro();
   time = millis();
   deltaTime = (time - timePrev) / 1000;
@@ -137,13 +136,6 @@ void RollAngleCalc(){
   rollAngle = 0.98 * rollAngle + rollGyro + 0.02 *rollAccel ;  //resulting real output angle
 }
 
-void new_PID(){
-  
-}
-
-
-
-
 
 void PID_Calc(){
   tempError = rollError;
@@ -151,8 +143,8 @@ void PID_Calc(){
   deltaError = rollError - tempError;
 
   P_calc = p_gain * rollError;
- // I_calc = I_calc + (i_gain * rollError);
- // D_calc = d_gain * (deltaError/deltaTime);
+  I_calc = I_calc + (i_gain * rollError);
+  D_calc = d_gain * (deltaError/deltaTime);
 
   PID_roll = P_calc + I_calc + D_calc;
 /*

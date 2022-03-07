@@ -53,6 +53,7 @@ void setup() {
   interrupts();
   
   sbus.begin();
+  Wire.begin();
   
   pinMode(rLED, OUTPUT);
   pinMode(gLED, OUTPUT);
